@@ -12,7 +12,7 @@ var peer = new Peer(undefined, {
 let myVideoStream
 navigator.mediaDevices.getUserMedia({
   video: true,
-  audio: true
+  audio: false
 }).then(stream => {
   myVideoStream = stream;
   addVideoStream(myVideo, stream);
@@ -27,6 +27,18 @@ navigator.mediaDevices.getUserMedia({
 
   socket.on('user-connected', (userId) => {
     connectToNewUser(userId, stream);
+  })
+  let msg = $('input');
+  $('html').keydown((e) => {
+    if (e.which == 13 && msg.val().lenght !== 0) {
+      socket.emit('message', msg.val());
+      msg.val('')
+    }
+  });
+
+  socket.on('createMessage', message => {
+    console.log("create message", message)
+    $('.messages').append(`<li class="message"><b>user</b><br/>${message}</li>`)
   })
 })
 
@@ -49,3 +61,10 @@ const addVideoStream = (video, stream) => {
   })
   videoGrid.append(video);
 }
+
+
+
+
+
+
+
